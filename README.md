@@ -1,2 +1,2 @@
 # graphs
-Tools for ploting data
+Tools for plotting data
