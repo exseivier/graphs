@@ -199,3 +199,26 @@ setMethod("scattWithStrings", signature("matrix", "character", "character", "cha
 	function(data, x, y, cat) {
 
 })
+
+setGeneric("plot.mirnas", function(dist_obj, test_wilcox_obj, targets, mirDB) standardGeneric("plot.mirnas"))
+setMethod("plot.mirnas", signature("SimpleList", "SimpleList", "SimpleList"),
+	function(dist_obj, test_wilcox_obj, targets, mirDB) {
+		total_plots <- length(test_wilcox_obj)
+		microrna.names <- SimpleList()
+		columns <- 3
+		if (total_plots+1 >= columns){
+			rows <- (total_plots+1) / columns
+			par(mfrow=c(rows+1, columns))
+		}
+		else {
+			par(mfrow=c(1, total_plots+1))
+		}
+		t <- c()
+		for (name in names(test_wilcox_obj)) {
+			microrna.names[[name]] <- mirDB[mirDB[,1] %in% name,3]
+			cumFreq(list(dist_obj[[1]][names(dist_obj[[1]]) %in% targets[[name]]], dist_obj[[1]][!names(dist_obj[[1]]) %in% targets[[name]]]), colors=c("blue", "red"), lty =c(1,1), names=c("inset", "outset"), width=0.02, xlab=paste("logFC difference", microrna.names[[name]], sep=" "), xlim=0)
+			t <- c(t, targets[[name]])
+		}
+		cumFreq(list(dist_obj[[1]][names(dist_obj[[1]]) %in% t], dist_obj[[1]][!names(dist_obj[[1]]) %in% t]), colors=c("blue", "red"), lty =c(1,1), names=c("inset", "outset"), width=0.02, xlab=paste("logFC difference", "TC", sep=" "), xlim=0)
+		str(microrna.names)
+})
